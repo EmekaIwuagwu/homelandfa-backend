@@ -90,7 +90,18 @@ if (require.main === module) {
 
 // Export for Vercel (Serverless)
 module.exports = async (req, res) => {
-    // Ensure DB is ready before handling request
-    await init();
-    return app(req, res);
+    try {
+        // Ensure DB is ready before handling request
+        await init();
+        return app(req, res);
+    } catch (error) {
+        console.error('Vercel Request Handler Error:', error);
+        res.statusCode = 500;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({
+            error: 'Server Startup Failed',
+            details: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        }));
+    }
 };

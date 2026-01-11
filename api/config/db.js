@@ -13,12 +13,18 @@ const client = createClient({
 
 const initDb = async () => {
   try {
-    // Check if we are using a local file and if it needsschema
-    const schemaPath = path.join(__dirname, '../../database/schema.sql');
+    // Check if we are using a local file and if it needs schema
+    // Use process.cwd() for reliable path resolution on Vercel
+    const schemaPath = path.join(process.cwd(), 'database', 'schema.sql');
+
+    if (!fs.existsSync(schemaPath)) {
+      console.warn(`⚠️ Schema file not found at: ${schemaPath}`);
+      return;
+    }
+
     const schema = fs.readFileSync(schemaPath, 'utf8');
 
     // Split schema into individual statements because execute() runs one at a time
-    // This is a simple split by semi-colon, might fail on complex triggers but works for simple schemas
     const statements = schema
       .split(';')
       .map(s => s.trim())
