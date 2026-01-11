@@ -2,7 +2,8 @@ const { createClient } = require('@libsql/client');
 const fs = require('fs');
 const path = require('path');
 
-const dbUrl = process.env.DATABASE_URL || 'file:./database/academy.db';
+// Fallback to /tmp for Vercel if cloud DB is not set
+const dbUrl = process.env.DATABASE_URL || 'file:/tmp/academy.db';
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
 const client = createClient({

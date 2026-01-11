@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Football Academy API is running', env: process.env.NODE_ENV });
 });
 
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
     res.json({ status: 'ok', timestamp: new Date() });
 });
 
