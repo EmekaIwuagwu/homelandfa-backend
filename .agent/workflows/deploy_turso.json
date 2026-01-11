@@ -1,0 +1,31 @@
+[
+    {
+        "description": "Deploy to Vercel with Turso Persistence",
+        "steps": [
+            {
+                "name": "Sign up for Turso",
+                "command": "echo 'Go to https://turso.tech/ and sign up. Install the CLI with: curl -sSfL https://get.tur.so/install.sh | bash'"
+            },
+            {
+                "name": "Create Database",
+                "command": "turso db create homeland-academy"
+            },
+            {
+                "name": "Get DB URL",
+                "command": "turso db show homeland-academy"
+            },
+            {
+                "name": "Create Auth Token",
+                "command": "turso db tokens create homeland-academy"
+            },
+            {
+                "name": "Configure Vercel Environment Variables",
+                "command": "echo 'Add DATABASE_URL (libsql://...) and TURSO_AUTH_TOKEN to Vercel'"
+            },
+            {
+                "name": "Deploy",
+                "command": "vercel"
+            }
+        ]
+    }
+]
