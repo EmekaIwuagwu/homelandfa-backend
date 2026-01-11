@@ -88,6 +88,21 @@ if (require.main === module) {
     });
 }
 
+// Keep-Alive Mechanism (Self-Ping)
+// Pings the server every 14 minutes to prevent Render free tier from sleeping
+const keepAliveUrl = process.env.RENDER_EXTERNAL_URL
+    ? `${process.env.RENDER_EXTERNAL_URL}/health`
+    : `http://localhost:${PORT}/health`;
+
+if (process.env.NODE_ENV === 'production') {
+    setInterval(() => {
+        const fetch = require('node-fetch'); // Ensure node-fetch is available
+        fetch(keepAliveUrl)
+            .then(res => console.log(`🔄 Keep-Alive Ping: ${res.status}`))
+            .catch(err => console.error('❌ Keep-Alive Failed:', err.message));
+    }, 14 * 60 * 1000); // 14 Minutes
+}
+
 // Export for Vercel (Serverless)
 module.exports = async (req, res) => {
     try {
