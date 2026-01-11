@@ -13,8 +13,8 @@ This is the Node.js/Express backend for the Homeland Football Academy management
 ## 🛠️ Tech Stack
 - **Runtime**: Node.js v18+
 - **Framework**: Express.js
-- **Database**: SQLite (via `better-sqlite3`)
-- **Deployment**: Vercel Serverless Functions
+- **Database**: SQLite (via `better-sqlite3` and `@libsql/client` for cloud)
+- **Deployment**: Vercel Serverless Functions or Render
 
 ## 📦 Setup
 
@@ -30,13 +30,13 @@ This is the Node.js/Express backend for the Homeland Football Academy management
    JWT_SECRET=your-secret
    RESEND_API_KEY=re_123...
    DATABASE_PATH=./database/academy.db
+   # For Cloud DB (optional):
+   # DATABASE_URL=libsql://...
+   # TURSO_AUTH_TOKEN=...
    ```
 
 3. **Database Seeding**
-   Initialize the database and create a Super Admin:
-   ```bash
-   npm run seed
-   ```
+   The database automatically seeds on startup if tables or admin are missing.
    *Default Admin:* `admin@homelandfa.com` / `password123`
 
 4. **Run Locally**
@@ -44,22 +44,21 @@ This is the Node.js/Express backend for the Homeland Football Academy management
    npm run dev
    ```
 
-## ☁️ Deployment on Vercel
+## ☁️ Deployment
 
-### Important Note on SQLite & Serverless
-Vercel functions have an **ephemeral filesystem**. This means any data written to the SQLite database **WILL BE LOST** when the function instance freezes or restarts. 
+### Render (Recommended for Persistence)
+1. Push to GitHub.
+2. Create Web Service on Render.
+3. Add `DATABASE_URL` and `TURSO_AUTH_TOKEN` (for Turso) OR rely on local disk (non-persistent on free tier).
 
-**For a persistent production environment:**
-1. Use an external database like **Turso (LibSQL)**, **PostgreSQL (Neon/Supabase)**, or **MongoDB**.
-2. OR deploy this backend to a traditional VPS (DigitalOcean, Railway, Render) where the filesystem is persistent.
-
-### Deploy Steps
+### Vercel (Serverless)
+**Important:** Use an external database like **Turso (LibSQL)** for persistence.
 1. Install Vercel CLI: `npm i -g vercel`
-2. Run `vercel` to deploy.
-3. Add Environment Variables in Vercel Project Settings.
+2. Run `vercel`.
+3. Add Environment Variables in Vercel.
 
 ## 🧪 Testing
-Run the comprehensive test suite to verify all endpoints:
+Run the comprehensive test suite:
 ```bash
 node test_suite.js
 ```
