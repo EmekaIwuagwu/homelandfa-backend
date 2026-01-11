@@ -63,23 +63,34 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 4000;
 
-// Startup Function
-const startServer = async () => {
+// Startup & Vercel Handler
+let isInitialized = false;
+
+const init = async () => {
+    if (isInitialized) return;
     try {
         await initDb();
         await seedDatabase();
-
-        if (require.main === module) {
-            app.listen(PORT, () => {
-                console.log(`Server running on port ${PORT}`);
-            });
-        }
+        isInitialized = true;
+        console.log('✅ Server Initialized');
     } catch (error) {
-        console.error('Startup failed:', error);
-        process.exit(1);
+        console.error('❌ Startup failed:', error);
+        throw error;
     }
 };
 
-startServer();
+// Start Local Server (Node.js)
+if (require.main === module) {
+    init().then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    });
+}
 
-module.exports = app;
+// Export for Vercel (Serverless)
+module.exports = async (req, res) => {
+    // Ensure DB is ready before handling request
+    await init();
+    return app(req, res);
+};
